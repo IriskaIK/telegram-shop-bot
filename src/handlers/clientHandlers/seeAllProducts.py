@@ -20,7 +20,7 @@ async def SeeAllProducts(callback_query: types.CallbackQuery, state: FSMContext)
     session = dbController.get_session()
     product = None
     with session() as s:
-        product = s.query(Product).all()
+        product = s.query(Product).filter(Product.isSelling == True).all()
     
     response = generateClientProductResponse(product)
     

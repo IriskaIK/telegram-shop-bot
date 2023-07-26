@@ -63,7 +63,8 @@ async def processProduct(callback_query: types.CallbackQuery, state: FSMContext)
         product = Product(
             name= pn,
             description= pd,
-            price= pp
+            price= pp,
+            isSelling = True
         )
 
         s.add(product)

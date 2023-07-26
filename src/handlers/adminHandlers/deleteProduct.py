@@ -47,7 +47,7 @@ async def ProcessProductNameOrId(message: types.Message, state : FSMContext):
     product = None
     with session() as s:
         if curState == 'Form:delete_name':
-            product = s.query(Product).filter(Product.name == message.text).all()
+            product = s.query(Product).filter(Product.name == message.text).filter(Product.isSelling == True).all()
         elif curState == 'Form:delete_id':
             product = s.query(Product).filter(Product.id == message.text).all()
         
@@ -56,7 +56,7 @@ async def ProcessProductNameOrId(message: types.Message, state : FSMContext):
             return
         response = generateProductResponse(list(product))
         if len(list(product)) == 1:
-            s.delete(product[0])
+            product[0].isSelling = False
             s.commit()
             await bot.send_message(message.from_user.id,f'Success!\n\n{response}Was deleted', reply_markup=kb.return_to_admin_interface_kb)
         else:

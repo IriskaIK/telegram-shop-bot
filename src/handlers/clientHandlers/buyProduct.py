@@ -50,7 +50,7 @@ async def ProcessProductNameOrId(message: types.Message, state : FSMContext):
     product = None
     with session() as s:
         if curState == 'Form:buy_name':
-            product = s.query(Product).filter(Product.name == message.text).all()
+            product = s.query(Product).filter(Product.name == message.text).filter(Product.isSelling == True).all()
         elif curState == 'Form:buy_id':
             product = s.query(Product).filter(Product.id == message.text).all()
         
