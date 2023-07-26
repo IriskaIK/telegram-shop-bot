@@ -1,0 +1,27 @@
+from aiogram import types
+from aiogram.dispatcher import FSMContext
+
+from models.session import dbController
+from models.models import Product
+from settings.bot_init import dp, bot
+# from handlers.handlers import dp
+from .keyboards import kb
+from ..state import Form
+from .service.ResponseGenerator import generateProductResponse
+
+
+@dp.callback_query_handler(text = 'admin_see', state=[Form.admin_interface])
+async def SeeAllProducts(callback_query: types.CallbackQuery, state: FSMContext):
+    
+    
+    await callback_query.answer()
+    await state.set_state(Form.see_all_products)
+    
+    session = dbController.get_session()
+    product = None
+    with session() as s:
+        product = s.query(Product).all()
+    
+    response = generateProductResponse(list(product))
+    
+    await bot.send_message(callback_query.from_user.id, f'All created products:\n{response}', reply_markup=kb.return_to_admin_interface_kb)
